@@ -1,5 +1,5 @@
 #include "khaje-sde-display.dtsi"
-&dsi_td4330_truly_v2_video {
+/*&dsi_td4330_truly_v2_video {
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
 	pwms = <&pm6125_pwm 0 0>;
@@ -48,6 +48,40 @@
 
 &sde_dsi {
 	qcom,dsi-default-panel = <&dsi_td4330_truly_v2_video>;
+}; */
+
+&soc {
+        xiaomi_touch {
+                status = "okay";
+                compatible = "xiaomi-touch";
+                touch,name = "xiaomi-touch";
+        };
+};
+
+&qupv3_se2_i2c {
+                        status = "okay";
+touchscreen {
+                status = "okay";
+                compatible = "focaltech,fts";
+                reg = <0x38>;
+                vcc_i2c-supply = <&L9A>;
+                interrupt-parent = <&tlmm>;
+                interrupts = <89 2>;
+                focaltech,avdd-gpio = <&tlmm 98 0>;
+                focaltech,reset-gpio = <&tlmm 86 1>;
+                focaltech,irq-gpio = <&tlmm 80 2>;
+                focaltech,max-touch-number = <10>;
+                focaltech,display-coords = <0 0 1080 2400>;
+                panel1 = <&dsi_k7_38_0c_0a_video>;
+                panel2 = <&dsi_k7_38_0c_0b_video>;
+                pinctrl-names = "pmx_ts_active", "pmx_ts_suspend", "pmx_ts_release";
+                pinctrl-0 = <&ts_int_active
+                             &ts_reset_active
+                             &ts_avdd>;
+                pinctrl-1 = <&ts_int_suspend
+                             &ts_reset_suspend>;
+                pinctrl-2 = <&ts_release>;
+        };
 };
 
 &qupv3_se2_i2c {
@@ -75,7 +109,7 @@
 		synaptics,extend_report;
 		synaptics,firmware-name = "synaptics_firmware_k.img";
 
-		panel = <&dsi_td4330_truly_v2_video &dsi_td4330_truly_v2_cmd>;
+		//panel = <&dsi_td4330_truly_v2_video &dsi_td4330_truly_v2_cmd>;
 	};
 
 	novatek@62 {

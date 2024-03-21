@@ -135,7 +135,10 @@ KHAJE_BOARDS += \
 		 khajeg-idp-nopmi-overlay.dtbo \
 		 khajeg-idp-usbc-overlay.dtbo \
 		 khajeg-idp-pm8010-overlay.dtbo \
-		 khajeg-idps-display-90hz-overlay.dtbo
+		 khajeg-idps-display-90hz-overlay.dtbo \
+                 spes-khaje-idp-nopmi-overlay.dtbo \
+                 spesn-khaje-idp-nopmi-overlay.dtbo \
+                 spes-sm5602-khaje-idp-nopmi-overlay.dtbo
 
 bengal-dtb-$(CONFIG_ARCH_KHAJE) += \
         $(call add-overlays, $(KHAJE_BOARDS) ,$(KHAJE_BASE_DTB))

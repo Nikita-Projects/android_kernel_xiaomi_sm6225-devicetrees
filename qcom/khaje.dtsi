@@ -11,7 +11,7 @@
 / {
 	model = "Qualcomm Technologies, Inc. Khaje SoC";
 	compatible = "qcom,khaje";
-	qcom,msm-id = <518 0x10000>, <586 0x10000>;
+	qcom,msm-id = <518 0x10000>;
 	interrupt-parent = <&intc>;
 
 	#address-cells = <2>;
@@ -33,6 +33,7 @@
 		ufshc1 = &ufshc_mem; /* Embedded UFS slot */
 		serial0 = &qupv3_se4_2uart;
 		hsuart0 = &qupv3_se3_4uart;
+		spi0 = &qupv3_se0_spi;
 	};
 
 	cpus {
@@ -412,7 +413,7 @@
 			compatible = "android,firmware";
 			vbmeta {
 				compatible="android,vbmeta";
-				parts = "vbmeta,boot,system,vendor,dtbo,recovery";
+				parts = "vbmeta,boot,system,vendor,dtbo";
 			};
 
 			fstab {
@@ -476,22 +477,22 @@
 
 		pil_adsp_mem: pil_adsp_region@53800000 {
 			no-map;
-			reg = <0x0 0x53800000 0x0 0x1e00000>;
+			reg = <0x0 0x53800000 0x0 0x2e00000>;
 		};
 
-		pil_ipa_fw_mem: ipa_fw_region@55600000 {
+		pil_ipa_fw_mem: ipa_fw_region@56600000 {
 			no-map;
-			reg = <0x0 0x55600000 0x0 0x10000>;
+			reg = <0x0 0x56600000 0x0 0x10000>;
 		};
 
-		pil_ipa_gsi_mem: ipa_gsi_region@55610000 {
+		pil_ipa_gsi_mem: ipa_gsi_region@56610000 {
 			no-map;
-			reg = <0x0 0x55610000 0x0 0x5000>;
+			reg = <0x0 0x56610000 0x0 0x5000>;
 		};
 
-		pil_gpu_mem: gpu_region@55615000 {
+		pil_gpu_mem: gpu_region@56615000 {
 			no-map;
-			reg = <0x0 0x55615000 0x0 0x2000>;
+			reg = <0x00 0x56615000 0x00 0x2000>;
 		};
 
 		video_mem: video_region@55617000 {
@@ -592,6 +593,14 @@
 			size = <0x0 0x1000000>;
 		};
 
+		/* Pstore ramoops */
+        ramoops_mem:ramoops@5D000000 {
+			compatible = "ramoops";
+			reg = <0x00 0x5d000000 0x00 0x400000>;
+			record-size = <0x80000>;
+			pmsg-size = <0x200000>;
+			console-size = <0x100000>;
+		};
 	};
 
 	chosen {
@@ -797,6 +806,12 @@
 		qcom,coresight-jtagmm-cpu = <&CPU7>;
 	};
 
+    sn_fuse:snfuse@0x01B46134 {
+		compatible = "qcom,sn-fuse";
+		reg = <0x1b46134 0x04 0x1b4607c 0x04>;
+		reg-names = "sn-base", "fuse-state";
+	};
+
 	qcom,memshare {
 		compatible = "qcom,memshare";
 
@@ -827,7 +842,7 @@
 	mpm: interrupt-controller@45f01b8 {
 		compatible = "qcom,mpm-khaje", "qcom,mpm";
 		reg = <0x45f01b8 0x1000>,
-		      <0xf111008 0x4>,  /* MSM_APCS_GCC_BASE 4K */
+		      <0xf011008 0x4>,  /* MSM_APCS_GCC_BASE 4K */
 		      <0xf121000 0x1000>;
 		reg-names = "vmpm", "ipc", "timer";
 		interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
@@ -2114,7 +2129,7 @@
 		reg-names = "wdt-base";
 		interrupts = <GIC_SPI 3 IRQ_TYPE_EDGE_RISING>,
 			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-		qcom,bark-time = <11000>;
+		qcom,bark-time = <15000>;
 		qcom,pet-time = <9360>;
 		qcom,ipi-ping;
 		qcom,wakeup-enable;
@@ -2703,6 +2718,8 @@
 
 		nvmem-cells = <&boot_config>;
 		nvmem-cell-names = "boot_conf";
+		spm-level = <3>;
+		rpm-level = <3>;
 
 		clock-names =
 			"core_clk",
@@ -2879,7 +2896,7 @@
 
 	qcom,rmtfs_sharedmem@0 {
 		compatible = "qcom,sharedmem-uio";
-		reg = <0x0 0x200000>;
+		reg = <0x0 0x300000>;
 		reg-names = "rmtfs";
 		qcom,client-id = <0x00000001>;
 		qcom,guard-memory;
@@ -4046,6 +4063,8 @@ tpdm_turing_llm: tpdm@8861000 {
 	interrupt-parent = <&tlmm>;
 	interrupts = <25 IRQ_TYPE_EDGE_RISING>;
 
+	status = "disable";
+	reg = <0x88>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pm8008_active &pm8008_interrupt>;
 };
@@ -4159,6 +4178,18 @@ tpdm_turing_llm: tpdm@8861000 {
 		};
 	};
 
+	disp_lcd_bias_en {
+	disp_lcd_bias_en_default:
+		disp_lcd_bias_en_default {
+			pins = "gpio9";
+			function = "func1";
+			input-disable;
+			output-enable;
+			bias-disable;
+			power-source = <0>;
+			qcom,drive-strength = <2>;
+		};
+	};
 };
 
 &spmi_bus {
