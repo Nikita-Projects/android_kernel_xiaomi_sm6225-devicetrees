@@ -58,6 +58,7 @@
 			compatible = "richtek,rt1711h";
 			reg = <0x4e>;
 			status = "okay";
+                        #io-channel-cells = <1>;
 			tcpc-dual,supported_modes = <0>;
 			rt-tcpc,name = "type_c_port0";
 			rt-tcpc,role_def = <4>;
@@ -126,6 +127,17 @@
     rpm:
         rt-pd-manager {
                 compatible = "richtek,rt-pd-manager";
+                #io-channel-cells = <1>;
+                io-channels = <&nopmi_chg PSY_IIO_USB_REAL_TYPE
+                               &nopmi_chg PSY_IIO_PD_ACTIVE
+                               &nopmi_chg PSY_IIO_PD_VOLTAGE_MIN
+                               &nopmi_chg PSY_IIO_PD_VOLTAGE_MAX
+                               &nopmi_chg PSY_IIO_PD_CURRENT_MAX
+                               &nopmi_chg PSY_IIO_TYPEC_CC_ORIENTATION
+                               &nopmi_chg PSY_IIO_PD_USB_SUSPEND_SUPPORTED
+                               &nopmi_chg PSY_IIO_PD_IN_HARD_RESET
+                               &rpm PSY_IIO_DEV_CHIP_ID>;
+                io-channel-names = "usb_real_type pd_active pd_voltage_min pd_voltage_max pd_current_max typec_cc_orientation pd_usb_suspend_supported pd_in_hard_reset cc_chip_id";
        };
 
 	xm_pd_adapter {
@@ -177,7 +189,9 @@
         #size-cells = <0>;
 
           /* BQ charger */
+bq2589x:
         bq2589x@6A {
+                                #io-channel-cells = <1>;
 				compatible = "ti,bq2589x-1";
 				reg = <0x6a>;
 				#address-cells = <1>;
@@ -203,9 +217,21 @@
 				ti,bq2589x,enable-termination;
 				ti,bq2589x,enable-ico;
 				ti,bq2589x,use-absolute-vindpm;
+                                io-channels = <&maxim_ds28e16 PSY_IIO_DS_CHIP_OK
+                                               &sm5602 PSY_IIO_FASTCHARGE_MODE
+                                               &sm5602 PSY_IIO_FG_MONITOR_WORK
+                                               &nopmi_chg PSY_IIO_MTBF_CUR
+                                               &nopmi_chg PSY_IIO_USB_REAL_TYPE
+                                               &nopmi_chg PSY_IIO_PD_ACTIVE
+                                               &nopmi_chg PSY_IIO_TYPEC_CC_ORIENTATION
+                                               &nopmi_chg PSY_IIO_TYPEC_MODE
+                                               &nopmi_chg PSY_IIO_FFC_DISABLE>;
+                                io-channel-names = "ds_chip_ok fastcharge_mode fg_monitor_work mtbf_cur usb_real_type pd_active typec_cc_orientation typec_mode ffc_disable";
 			};
 
+sm5602:
 			sm5602@71 {
+                                #io-channel-cells = <1>;
 				compatible = "sm,sm5602";
 				reg = <0x71>;
 				sm,en_temp_ex;
@@ -227,6 +253,16 @@
 				sm,t_h_alarm_ex = <38239>; 
 				sm,shutdown-delay-enable;
 				sm,soc_decimal_rate = <0 38 10 35 20 33 30 33 40 33 50 33 60 33 70 30 80 25 90 20 95 10>;
+                                io-channels = <&maxim_ds28e16 PSY_IIO_DS_AUTHEN_RESULT
+                                               &maxim_ds28e16 PSY_IIO_DS_ROMID
+                                               &maxim_ds28e16 PSY_IIO_DS_STATUS
+                                               &maxim_ds28e16 PSY_IIO_DS_PAGE0_DATA
+                                               &maxim_ds28e16 PSY_IIO_DS_CHIP_OK
+                                               &nopmi_chg PSY_IIO_USB_REAL_TYPE
+                                               &sc8551_standalone PSY_IIO_CHARGING_ENABLED
+                                               &sc8551_standalone PSY_IIO_SC_BATTERY_VOLTAGE
+                                               &bq2589x PSY_IIO_CHARGE_DONE>;
+                                io-channel-names = "ds_authen_result ds_romid ds_status ds_page0_data ds_chip_ok usb_real_type charging_enabled sc_battery_voltage charge_done";
 
 				battery_params {
 				/* battery 0 */
@@ -327,7 +363,9 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
+sc8551_standalone:
 	sc8551-charger@66 {
+                #io-channel-cells = <1>;
 		compatible = "sc,sc8551-standalone";
 		reg = <0x66>;
 		interrupt-parent = <&tlmm>;
@@ -356,6 +394,7 @@
 &soc {
 nopmi_chg:
         qcom,nopmi-chg {
+                #io-channel-cells = <1>;
 		compatible = "qcom,nopmi-chg";
 		status = "okay";
 		qcom,fv-max-uv = <4400000>;
@@ -390,6 +429,24 @@ nopmi_chg:
 		temp_t0_to_t1_fcc = <950>;
 		temp_tn1_to_t0_fcc = <490>;
 		nopmi,thermal-mitigation = <5950000 5400000 5000000 4500000 4000000 3700000 3500000 3000000 2800000 2500000 2000000 1500000 1000000 800000 500000  300000>;
+                io-channels = <&sm5602 PSY_IIO_RESISTANCE_ID
+                               &sm5602 PSY_IIO_SHUTDOWN_DELAY
+                               &sm5602 PSY_IIO_SOC_DECIMAL
+                               &sm5602 PSY_IIO_SOC_DECIMAL_RATE
+                               &sm5602 PSY_IIO_FASTCHARGE_MODE
+                               &sm5602 PSY_IIO_BATT_ID
+                               &bq2589x PSY_IIO_CHARGE_TYPE
+                               &bq2589x PSY_IIO_CHARGE_ENABLED
+                               &bq2589x PSY_IIO_CHARGE_IC_TYPE
+                               &bq2589x PSY_IIO_PD_ACTIVE
+                               &sc8551_standalone PSY_IIO_SC_BUS_CURRENT
+                               &sc8551_standalone PSY_IIO_CHARGING_ENABLED
+                               &sc8551_standalone PSY_IIO_DEV_CHIP_ID
+                               &rpm PSY_IIO_DEV_CHIP_ID
+                               &maxim_ds28e16 PSY_IIO_DEV_CHIP_ID
+                               &maxim_ds28e16 PSY_IIO_DS_CHIP_OK
+                               &maxim_ds28e16 PSY_IIO_DS_AUTHEN_RESULT>;
+	        io-channel-names = "resistance_id shutdown_delay soc_decimal soc_decimal_rate fastcharge_mode fg_batt_id charge_type charge_enabled charge_ic_type charge_pd_active sc_bus_current charging_enabled sc_chip_id ln_bus_current ln_charging_enabled ln_chip_id cc_chip_id ds_chip_id ds_chip_ok ds_authen_result";
 	};
 
 onewire_gpio:
@@ -408,6 +465,7 @@ onewire_gpio:
 
 maxim_ds28e16:	
 	maxim_ds28e16 {
+                #io-channel-cells = <1>;
 		compatible = "maxim,ds28e16";
 		label = "max_ds28e16";
 		maxim,version = <1>;
