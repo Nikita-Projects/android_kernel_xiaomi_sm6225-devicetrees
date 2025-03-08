@@ -144,8 +144,9 @@ XIAOMI_KHAJE_BOARDS += \
 		tapas-sm5602-khaje-idp-nopmi-overlay.dtbo \
 		topaz-sm5602-khaje-idp-nopmi-overlay.dtbo
 else ifeq ($(CONFIG_SAPPHIRE_DTB),y)
-# XIAOMI_KHAJE_BOARDS += \
-# TODO: Add support for sapphire
+XIAOMI_KHAJE_BOARDS += \
+		sapphire-khaje-idp-overlay.dtbo \
+                sapphiren-khaje-idp-overlay.dtbo
 else ifeq ($(CONFIG_XUN_DTB),y)
 # XIAOMI_KHAJE_BOARDS += \
 # TODO: Add support for xun

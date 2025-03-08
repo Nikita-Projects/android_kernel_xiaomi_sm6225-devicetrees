@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "sapphiren.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. KHAJE IDP sapphiren";
+	compatible = "qcom,khaje-idp", "qcom,khaje", "qcom,idp";
+	qcom,msm-id = <586 0x10000 518 0x10000>;
+	qcom,board-id = <0x30022 0>;
+	qcom,pmic-id = <0x2D 0x2E 0x0 0x0>;
+};
